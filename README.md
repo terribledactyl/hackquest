@@ -20,14 +20,14 @@ Features:
   - Launch shells and exploit sessions via Meterpreter.
 
 Menu Options:
-  1. Basic Network Info         Display IP, hostname, and default gateway.
-  2. Discover Hosts             Discover active hosts on the network.
-  3. List Known Hosts           View hosts discovered during the session.
-  4. PSR Scan Hosts             Run port, service, and recon scans on discovered hosts.
-  5. Read PSR Results           Browse and view saved PSR Scan results.
-  6. Launch Shell               Open an interactive shell.
-  7. Launch Meterpreter         Start Meterpreter console (requires msfconsole).
-  8. Help                       Show this menu.
+  1. Basic Network Info         - Display IP, hostname, and default gateway.
+  2. Discover Hosts             - Discover active hosts on the network.
+  3. List Known Hosts           - View hosts discovered during the session.
+  4. PSR Scan Hosts             - Run port, service, and recon scans on discovered hosts.
+  5. Read PSR Results           - Browse and view saved PSR Scan results.
+  6. Launch Shell               - Open an interactive shell.
+  7. Launch Meterpreter         - Start Meterpreter console (requires msfconsole).
+  8. Help                       - Show this menu.
 
 Notes:
   - Ensure all required tools are installed and in the PATH.
