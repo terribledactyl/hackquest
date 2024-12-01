@@ -33,3 +33,8 @@ Menu Options:
 Notes:
   - Ensure all required tools are installed and in the PATH.
   - The startup audio file must be in the same directory as HackQuest.
+
+To Do:
+  - Add dependency auto-complete (finds tool not installed, asks if you want to install it)
+  - Map out RPI -> GBA buttons
+  - Consider Options function to switch from eth0 to wifi for wireless enumeration
