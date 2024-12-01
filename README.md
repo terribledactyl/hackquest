@@ -12,6 +12,7 @@ Usage:
 Requirements:
   - Must be run as root.
   - Required tools: ip, netdiscover, nmapAutomator (modded for ffuf), metasploit console, alsa-utils.
+  - MAKE SURE nmapAutomator is in in your path as "nmapAutomator"
 
 Features:
   - Discover hosts on the network.
