@@ -3,7 +3,8 @@
 Description:
   HackQuest is a gamified enumeration and exploitation script for penetration testers.
   It automates network discovery, scanning, and exploitation tasks while providing
-  an interactive menu-driven interface.
+  an interactive menu-driven interface. It's meant to be used in the context of a 
+  Raspberry Pi with GameBoy-style inputs (i.e. A + B buttons, D-Pad). WIP
 
 Usage:
   sudo ./hackquest.sh
