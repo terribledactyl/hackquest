@@ -1,9 +1,5 @@
-# hackquest
-A bash script for gamified hacking on an RPI with GBA inputs. WIP.
+# HackQuest v0.1-Alpha
 
-==================================
- HackQuest v0.1-Alpha
-==================================
 Description:
   HackQuest is a gamified enumeration and exploitation script for penetration testers.
   It automates network discovery, scanning, and exploitation tasks while providing
