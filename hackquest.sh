@@ -62,7 +62,7 @@ play_startup_sound() {
 }
 
 # Menu items
-MENU=("Basic Network Info" "Discover Hosts" "List Known Hosts" "PSR Scan Hosts" "Read PSR Results" "Launch Shell (KB Required)" "Launch Meterpreter (KB Required)" "Help" "Exit")
+MENU=("Select Interface" "Basic Network Info" "Discover Hosts" "List Known Hosts" "PSR Scan Hosts" "Read PSR Results" "Launch Shell (KB Required)" "Launch Meterpreter (KB Required)" "Help" "Exit")
 
 # Function to display the menu with highlighting
 show_menu() {
@@ -80,18 +80,68 @@ show_menu() {
     done
 }
 
+# Function to select a network interface using arrow keys
+select_interface() {
+    local interfaces=($(ip -o link show | awk -F': ' '{print $2}')) # Get a list of network interfaces
+    local current=0
+
+    while true; do
+        clear
+        echo "=========================="
+        echo " Select Network Interface "
+        echo "=========================="
+        for i in "${!interfaces[@]}"; do
+            if [[ $i -eq $current ]]; then
+                echo -e "\e[1;32m> ${interfaces[i]}\e[0m"  # Highlight the current selection
+            else
+                echo "  ${interfaces[i]}"
+            fi
+        done
+        echo "=========================="
+        echo "Use Up/Down arrows to navigate and Enter to select."
+
+        # Read user input
+        read -rsn1 key
+        case "$key" in
+            $'\x1b')  # Escape sequence
+                read -rsn2 -t 0.1 key
+                case "$key" in
+                    "[A")  # Up arrow
+                        ((current--))
+                        if [[ $current -lt 0 ]]; then
+                            current=$((${#interfaces[@]} - 1))
+                        fi
+                        ;;
+                    "[B")  # Down arrow
+                        ((current++))
+                        if [[ $current -ge ${#interfaces[@]} ]]; then
+                            current=0
+                        fi
+                        ;;
+                esac
+                ;;
+            "")  # Enter key
+                echo "Selected Interface: ${interfaces[current]}"
+                SELECTED_INTERFACE="${interfaces[current]}"  # Set the selected interface as a global variable
+                break
+                ;;
+        esac
+    done
+}
+
+
 # Basic Network Functions
 get_current_ip() {
-	ip -o -f inet addr show eth0 | awk '{print $4}' | cut -d'/' -f1
+	ip -o -f inet addr show $SELECTED_INTERFACE | awk '{print $4}' | cut -d'/' -f1
 }
 
 get_default_gateway() {
-	ip route show default | awk '{print $3}'
+	ip route show dev $SELECTED_INTERFACE | grep default | awk '{print $3}'
 }
 
 # NetDiscover Enumeration
 netdiscover_enum() {
-	discovered_hosts=$(timeout 15 sudo netdiscover -P | grep -oP '\d+\.\d+\.\d+\.\d+')
+	discovered_hosts=$(timeout 15 sudo netdiscover -i $SELECTED_INTERFACE -P | grep -oP '\d+\.\d+\.\d+\.\d+')
 }
 
 # NmapAutomator Full Scan - Ports and Services
@@ -163,7 +213,7 @@ read_file_menu() {
                 clear
                 echo "Contents of '${files[file_current]}':"
                 if [[ -f "${files[file_current]}" ]]; then
-                    more -r "${files[file_current]}"
+                    more "${files[file_current]}"
                 else
                     echo "Not a regular file or unable to read."
                 fi
@@ -179,7 +229,13 @@ read_file_menu() {
 # Function to handle user selection
 process_choice() {
     case $CURRENT in
-        0)
+        0) 
+            select_interface
+            ;;
+        1)
+            if [ -z "$SELECTED_INTERFACE" ]; then
+            	printf "\nNo interface set! Use \"Select Interface\" function first.\n"
+            else
             printf "\nCurrent IP: "
             get_current_ip
             printf "Hostname: "
@@ -187,13 +243,18 @@ process_choice() {
             printf "Default Gateway: "
             get_default_gateway
             printf "\n"
+            fi
             ;;
-        1)
+        2)
+            if [ -z "$SELECTED_INTERFACE" ]; then
+            	printf "\nNo interface set! Use \"Select Interface\" function first.\n"
+            else
             printf "\nDiscovering Hosts, please wait..."
             netdiscover_enum
             printf "\nDone! Use \"List Known Hosts\" to view hosts.\n"
+            fi
             ;;
-        2)
+        3)
             if [ -z "$discovered_hosts" ]; then
             	printf "\nNothing discovered yet! Use \"Discover Hosts\" function first.\n"
             else
@@ -201,7 +262,7 @@ process_choice() {
             	echo "$discovered_hosts"
             fi
             ;;
-        3)
+        4)
             if [ -z "$discovered_hosts" ]; then
             	printf "\nNothing discovered yet! Use \"Discover Hosts\" function first.\n"
             else
@@ -209,19 +270,19 @@ process_choice() {
             	nmap_full_enum
             fi
             ;;
-        4)
+        5)
             read_file_menu
             ;;
-        5)
+        6)
        	    /bin/bash -p
        	    ;; 
-       	6)
+       	7)
        	    msfconsole && init msfdb
        	    ;;
-       	7)
+       	8)
        	    show_help | more
        	    ;;
-        8)
+        9)
             echo "Exiting HackQuest... Goodbye!"
             exit 0
             ;;
